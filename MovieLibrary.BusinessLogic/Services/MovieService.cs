@@ -22,9 +22,7 @@ namespace MovieLibrary.BusinessLogic.Services
             _mapper = mapper;
         }
 
-#pragma warning disable S1541 // Methods and properties should not be too complex
         public async Task<int> CreateMovie(MovieDTO movie)
-#pragma warning restore S1541 // Methods and properties should not be too complex
         {
             if (movie == null)
             {

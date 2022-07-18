@@ -11,6 +11,6 @@ namespace MovieLibrary.DataAccess.Models
 
         public string? LastName { get; set; }
 
-        public virtual IList<Movie> Movies { get; set; } = new List<Movie>();
+        public virtual IList<Movie> Movies { get; private set; } = new List<Movie>();
     }
 }

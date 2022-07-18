@@ -1,4 +1,6 @@
-﻿namespace MovieLibrary.API.Entities
+﻿using System.Collections.ObjectModel;
+
+namespace MovieLibrary.API.Entities
 {
 #pragma warning disable S101 // Types should be named in PascalCase
     public class DirectorDTO
@@ -10,6 +12,6 @@
 
         public string? LastName { get; set; }
 
-        public List<MovieDTO> Movies { get; set; } = new List<MovieDTO>();
+        public Collection<MovieDTO> Movies { get; private set; } = new Collection<MovieDTO>();
     }
 }

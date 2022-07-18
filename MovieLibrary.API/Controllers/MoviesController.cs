@@ -1,8 +1,4 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using MovieLibrary.API.Logger;
+﻿using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.BusinessLogic.Interfaces;
 using MovieLibrary.BusinessLogic.Models;
 

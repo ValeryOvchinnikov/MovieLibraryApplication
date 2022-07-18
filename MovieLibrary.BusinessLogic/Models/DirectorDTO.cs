@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,6 @@ namespace MovieLibrary.BusinessLogic.Models
 
         public string? LastName { get; set; }
 
-        public List<MovieDTO> Movies { get; set; } = new List<MovieDTO>();
+        public Collection<MovieDTO> Movies { get; private set; } = new Collection<MovieDTO>();
     }
 }

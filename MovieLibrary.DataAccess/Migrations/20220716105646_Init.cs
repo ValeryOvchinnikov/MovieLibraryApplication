@@ -8,7 +8,6 @@ namespace MovieLibrary.DataAccess.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-#pragma warning disable S3254 // Default parameter values should not be passed as arguments
             migrationBuilder.CreateTable(
                 name: "Directors",
                 columns: table => new
@@ -22,9 +21,7 @@ namespace MovieLibrary.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Directors", x => x.Id);
                 });
-#pragma warning restore S3254 // Default parameter values should not be passed as arguments
 
-#pragma warning disable S3254 // Default parameter values should not be passed as arguments
             migrationBuilder.CreateTable(
                 name: "Movies",
                 columns: table => new
@@ -46,7 +43,6 @@ namespace MovieLibrary.DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-#pragma warning restore S3254 // Default parameter values should not be passed as arguments
 
             migrationBuilder.CreateIndex(
                 name: "IX_Movies_DirectorId",
