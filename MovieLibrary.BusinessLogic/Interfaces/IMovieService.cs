@@ -1,6 +1,5 @@
-﻿using LinqKit;
+﻿using MovieLibrary.BusinessLogic.Infrastructure;
 using MovieLibrary.BusinessLogic.Models;
-using MovieLibrary.DataAccess.Models;
 
 namespace MovieLibrary.BusinessLogic.Interfaces
 {
@@ -8,16 +7,18 @@ namespace MovieLibrary.BusinessLogic.Interfaces
     {
         Task<int> CreateMovie(MovieDTO movie);
 
+        Task CreateMovieList(List<MovieDTO> movieList);
+
         Task UpdateMovie(MovieDTO movie);
 
         Task DeleteMovie(int id);
 
         Task<MovieDTO?> GetMovie(int id);
 
-        Task<IEnumerable<MovieDTO>?> GetFilteredMovies(ExpressionStarter<Movie> filter);
+        Task<IEnumerable<MovieDTO>?> GetFilteredMovies(Filter filter);
 
-        Task<IList<DirectorDTO>?> GetAllDirectors();
+        Task<IEnumerable<DirectorDTO>?> GetAllDirectors();
 
-        Task<IList<MovieDTO>?> GetAllMovies();
+        Task<IEnumerable<MovieDTO>?> GetAllMovies();
     }
 }

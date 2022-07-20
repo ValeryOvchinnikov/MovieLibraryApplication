@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MovieLibrary.WPF.Utility;
+using MovieLibrary.WPF.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,8 @@ namespace MovieLibrary.WPF
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new MainWindowViewModel(new DialogService());
         }
     }
 }

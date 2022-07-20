@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace MovieLibrary.BusinessLogic.Models
 {
-#pragma warning disable S101 // Types should be named in PascalCase
     public class MovieDTO
-#pragma warning restore S101 // Types should be named in PascalCase
     {
         public int Id { get; set; }
 

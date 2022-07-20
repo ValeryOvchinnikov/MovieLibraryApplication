@@ -23,6 +23,12 @@ namespace MovieLibrary.DataAccess.Repositories
             return entityId;
         }
 
+        public async Task CreateRangeAsync(List<Movie> movies)
+        {
+            await _mlContext.Movies.AddRangeAsync(movies);
+            await _mlContext.SaveChangesAsync();
+        }
+
         public async Task DeleteAsync(int id)
         {
             var movie = await _mlContext.Movies.FindAsync(id);
@@ -46,9 +52,9 @@ namespace MovieLibrary.DataAccess.Repositories
             return movie;
         }
 
-        public async Task<IEnumerable<Movie>> GetWhere(ExpressionStarter<Movie> condition)
+        public async Task<List<Movie>> GetWhere(ExpressionStarter<Movie> condition)
         {
-            var movies = _mlContext.Movies.Where(condition).Select(m => m);
+            var movies = _mlContext.Movies.Where(condition);
             return await movies.ToListAsync();
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MovieLibrary.BusinessLogic.Infrastructure;
 using MovieLibrary.BusinessLogic.Interfaces;
 using MovieLibrary.BusinessLogic.Models;
 
@@ -15,22 +16,22 @@ namespace MovieLibrary.API.Controllers
             _movieService = movieService;
         }
 
-        [HttpGet]
+        [HttpGet("GetMovies")]
         public async Task<ActionResult<List<MovieDTO>>> GetMovies()
         {
             var movieList = await _movieService.GetAllMovies();
             return Ok(movieList);
         }
 
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = "GetMovieById")]
         public async Task<ActionResult<MovieDTO>> GetMovie(int id)
         {
             var movie = await _movieService.GetMovie(id);
             return Ok(movie);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Post(MovieDTO movie)
+        [HttpPost("CreateMovie")]
+        public async Task<ActionResult> CreateMovie(MovieDTO movie)
         {
             if (movie == null)
             {
@@ -53,6 +54,13 @@ namespace MovieLibrary.API.Controllers
         {
             var directorsList = await _movieService.GetAllDirectors();
             return Ok(directorsList);
+        }
+
+        [HttpGet("GetMoviesByFilter")]
+        public async Task<ActionResult<List<MovieDTO>>> GetMoviesByFilter([FromQuery] Filter filter)
+        {
+            var movieList = await _movieService.GetFilteredMovies(filter);
+            return Ok(movieList);
         }
 
         [HttpPut("{id}", Name = "UpdateMovie")]

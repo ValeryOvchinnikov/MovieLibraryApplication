@@ -21,7 +21,7 @@ namespace MovieLibrary.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Shared.Models.Director", b =>
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Director", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,7 +40,7 @@ namespace MovieLibrary.DataAccess.Migrations
                     b.ToTable("Directors");
                 });
 
-            modelBuilder.Entity("Shared.Models.Movie", b =>
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,9 +67,9 @@ namespace MovieLibrary.DataAccess.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("Shared.Models.Movie", b =>
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Movie", b =>
                 {
-                    b.HasOne("Shared.Models.Director", "Director")
+                    b.HasOne("MovieLibrary.DataAccess.Models.Director", "Director")
                         .WithMany("Movies")
                         .HasForeignKey("DirectorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -78,7 +78,7 @@ namespace MovieLibrary.DataAccess.Migrations
                     b.Navigation("Director");
                 });
 
-            modelBuilder.Entity("Shared.Models.Director", b =>
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Director", b =>
                 {
                     b.Navigation("Movies");
                 });

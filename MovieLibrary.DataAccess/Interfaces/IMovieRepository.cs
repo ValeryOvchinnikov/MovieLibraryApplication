@@ -6,6 +6,8 @@ namespace MovieLibrary.DataAccess.Interfaces
 {
     public interface IMovieRepository : IRepository<Movie>
     {
-        Task<IEnumerable<Movie>> GetWhere(ExpressionStarter<Movie> condition);
+        Task<List<Movie>> GetWhere(ExpressionStarter<Movie> condition);
+        Task CreateRangeAsync(List<Movie> movies);
+
     }
 }

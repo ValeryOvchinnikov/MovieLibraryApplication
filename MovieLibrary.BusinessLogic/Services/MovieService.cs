@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using LinqKit;
 using MovieLibrary.BusinessLogic.Infrastructure;
 using MovieLibrary.BusinessLogic.Interfaces;
@@ -76,20 +75,41 @@ namespace MovieLibrary.BusinessLogic.Services
             await _movieRepository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable<MovieDTO>?> GetFilteredMovies(ExpressionStarter<Movie> filter)
+        public async Task<IEnumerable<MovieDTO>?> GetFilteredMovies(Filter filter)
         {
-            List<Movie>? movies = await _movieRepository.GetWhere(filter) as List<Movie>;
-            IEnumerable<MovieDTO> mappedMovies = movies!.Select(movie => _mapper.Map<MovieDTO>(movie));
-
-            return mappedMovies;
+            ExpressionStarter<Movie> filterExpressions;
+            filterExpressions = PredicateBuilder.New<Movie>().And(m => true);
+            if (!string.IsNullOrEmpty(filter.FilterMovieName))
+            {
+                filterExpressions.And(m => m.Name.Contains(filter.FilterMovieName));
+            }
+            if (!string.IsNullOrEmpty(filter.FilterMovieYear))
+            {
+                filterExpressions.And(m => m.Year.ToString().Contains(filter.FilterMovieYear));
+            }
+            if (!string.IsNullOrEmpty(filter.FilterDirectorFirstName))
+            {
+                filterExpressions.And(m => m.Director.FirstName.Contains(filter.FilterDirectorFirstName));
+            }
+            if (!string.IsNullOrEmpty(filter.FilterDirectorLastName))
+            {
+                filterExpressions.And(m => m.Director.LastName.Contains(filter.FilterDirectorLastName));
+            }
+            if (!string.IsNullOrEmpty(filter.FilterMovieRating))
+            {
+                filterExpressions.And(m => m.Rating.ToString() == filter.FilterMovieRating.ToString());
+            }
+            List<Movie>? movies = await _movieRepository.GetWhere(filterExpressions);
+            IEnumerable<MovieDTO>? mappedMovies = movies!.Select(movie => _mapper.Map<MovieDTO>(movie));
+            return mappedMovies.ToList();
         }
 
-        public async Task<IList<MovieDTO>?> GetAllMovies()
+        public async Task<IEnumerable<MovieDTO>?> GetAllMovies()
         {
             List<Movie>? movies = await _movieRepository.GetAllAsync() as List<Movie>;
 
             IEnumerable<MovieDTO> mappedMovies = movies!.Select(movie => _mapper.Map<MovieDTO>(movie));
-            return mappedMovies.ToList();
+            return mappedMovies;
         }
 
         public async Task<MovieDTO?> GetMovie(int id)
@@ -123,11 +143,21 @@ namespace MovieLibrary.BusinessLogic.Services
             await _movieRepository.UpdateAsync(newMovie);
         }
 
-        public async Task<IList<DirectorDTO>?> GetAllDirectors()
+        public async Task<IEnumerable<DirectorDTO>?> GetAllDirectors()
         {
             List<Director>? directors = await _directorRepository.GetAllAsync() as List<Director>;
             var mappedDirectors = directors?.Select(d => _mapper.Map<DirectorDTO>(d));
             return mappedDirectors?.ToList();
+        }
+
+        public async Task CreateMovieList(List<MovieDTO> movieList)
+        {
+            if (movieList == null)
+            {
+                throw new ValidationException("List of movie is empty");
+            }
+            List<Movie>? mappedMovies = movieList.Select(m => _mapper.Map<Movie>(m)) as List<Movie>;
+            await _movieRepository.CreateRangeAsync(mappedMovies);
         }
     }
 }
