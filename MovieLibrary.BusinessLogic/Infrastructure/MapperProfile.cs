@@ -68,7 +68,7 @@ namespace MovieLibrary.BusinessLogic.Infrastructure
                 .ForMember(
                     dest => dest.Movies,
                     opt => opt.MapFrom(src => src.Movies));
-            
+
             CreateMap<DirectorDTO, Director>()
                 .ForMember(
                     dest => dest.Id,

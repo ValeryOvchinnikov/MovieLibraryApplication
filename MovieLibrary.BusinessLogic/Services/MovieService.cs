@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LinqKit;
 using MovieLibrary.BusinessLogic.Infrastructure;
+using MovieLibrary.BusinessLogic.Infrastructure.Logger;
 using MovieLibrary.BusinessLogic.Interfaces;
 using MovieLibrary.BusinessLogic.Models;
 using MovieLibrary.DataAccess.Interfaces;
@@ -10,6 +11,7 @@ namespace MovieLibrary.BusinessLogic.Services
 {
     public class MovieService : IMovieService
     {
+        private ILog _logger;
         private readonly IMovieRepository _movieRepository;
         private readonly IDirectorRepository _directorRepository;
         private readonly IMapper _mapper;
@@ -19,12 +21,14 @@ namespace MovieLibrary.BusinessLogic.Services
             _movieRepository = movieRepository;
             _directorRepository = directorRepository;
             _mapper = mapper;
+            _logger = Log.GetInstance;
         }
 
         public async Task<int> CreateMovie(MovieDTO movie)
         {
             if (movie == null)
             {
+                _logger.LogException("Data not found");
                 throw new ValidationException("Data not found");
             }
 
@@ -53,6 +57,7 @@ namespace MovieLibrary.BusinessLogic.Services
                 Movie? mv = directorsMovies.FirstOrDefault();
                 if (mv != null)
                 {
+                    _logger.LogException("Such movie already exist");
                     throw new ValidationException("Such movie already exist");
                 }
                 else
@@ -69,7 +74,7 @@ namespace MovieLibrary.BusinessLogic.Services
         {
             if (await _movieRepository.GetByIdAsync(id) == null)
             {
-                throw new ValidationException("Movie was not found");
+                OnException("Movie was not found");
             }
 
             await _movieRepository.DeleteAsync(id);
@@ -117,7 +122,7 @@ namespace MovieLibrary.BusinessLogic.Services
             Movie? movie = await _movieRepository.GetByIdAsync(id);
             if (movie == null)
             {
-                throw new ValidationException("Movie was not found");
+                OnException("Movie was not found");
             }
 
             var movieDTO = _mapper.Map<MovieDTO>(movie);
@@ -129,14 +134,14 @@ namespace MovieLibrary.BusinessLogic.Services
         {
             if (movie == null)
             {
-                throw new ValidationException("Data not found");
+                OnException("Data not found");
             }
 
             var oldMovie = await _movieRepository.GetByIdAsync(movie.Id);
 
             if (oldMovie == null)
             {
-                throw new ValidationException("Movie not found");
+                OnException("Movie not found");
             }
 
             var newMovie = _mapper.Map<Movie>(movie);
@@ -154,10 +159,16 @@ namespace MovieLibrary.BusinessLogic.Services
         {
             if (movieList == null)
             {
-                throw new ValidationException("List of movie is empty");
+                OnException("List of movie is empty");
             }
             List<Movie>? mappedMovies = movieList.Select(m => _mapper.Map<Movie>(m)) as List<Movie>;
             await _movieRepository.CreateRangeAsync(mappedMovies);
+        }
+
+        protected void OnException(string message)
+        {
+            _logger.LogException(message);
+            throw new ValidationException(message);
         }
     }
 }

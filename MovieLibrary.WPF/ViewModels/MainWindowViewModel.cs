@@ -1,5 +1,7 @@
 ﻿using ClosedXML.Excel;
+using IdentityModel.Client;
 using LinqKit;
+using MovieLibrary.BusinessLogic.Infrastructure;
 using MovieLibrary.BusinessLogic.Models;
 using MovieLibrary.WPF.Comands;
 using MovieLibrary.WPF.Comands.Pagination;
@@ -9,22 +11,22 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using MovieLibrary.BusinessLogic.Infrastructure;
-using System.Web;
 
 namespace MovieLibrary.WPF.ViewModels
 {
     internal class MainWindowViewModel : INotifyPropertyChanged
     {
-        HttpClient client = new HttpClient();
+        HttpClient authClient = new HttpClient();
+        HttpClient webApiClient = new HttpClient();
         private readonly IDialogService _dialogService;
         private ICommand _openCSVCommand;
         private ICommand _writeXMLCommand;
@@ -232,8 +234,9 @@ namespace MovieLibrary.WPF.ViewModels
         public MainWindowViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
-            client.BaseAddress = new Uri("https://localhost:7139");
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            webApiClient.BaseAddress = new Uri("https://localhost:6001");
+            webApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            RequestAndSetAccessTokenAsync();
             ViewList = new CollectionViewSource();
             NextCommand = new NextPageCommand(this);
             PreviousCommand = new PreviousPageCommand(this);
@@ -257,6 +260,34 @@ namespace MovieLibrary.WPF.ViewModels
             }
         }
 
+        public async Task RequestAndSetAccessTokenAsync()
+        {
+            EnableButtons(false);
+
+            var discovery = await authClient.GetDiscoveryDocumentAsync("https://localhost:5001");
+            if (discovery.IsError)
+            {
+                MessageBox.Show(discovery.Error);
+                return;
+            }
+
+            var tokenResponse = await authClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+            {
+                Address = discovery.TokenEndpoint,
+                ClientId = "WPF App",
+                ClientSecret = "secret",
+                Scope = "movieLibraryApi"
+            });
+
+            if (tokenResponse.IsError)
+            {
+                MessageBox.Show(tokenResponse.Error);
+                return;
+            }
+
+            webApiClient.SetBearerToken(tokenResponse.AccessToken);
+            EnableButtons(true);
+        }
         private void CalculateTotalPages()
         {
             _itemcount = ViewList.View.SourceCollection.Cast<MovieDTO>().Count();
@@ -408,13 +439,13 @@ namespace MovieLibrary.WPF.ViewModels
                 FilterDirectorLastName = FilterDirectorLastName,
                 FilterMovieRating = FilterMovieRating,
             };
-        
+
             var properties = from p in newFilter.GetType().GetProperties()
                              where !string.IsNullOrEmpty((string)p.GetValue(newFilter, null))
                              select p.Name + "=" + HttpUtility.UrlEncode(p.GetValue(newFilter, null).ToString());
             string queryString = String.Join("&", properties.ToArray());
             EnableButtons(false);
-            var response = await client.GetAsync($"api/Movies/GetMoviesByFilter?{queryString}");
+            var response = await webApiClient.GetAsync($"api/Movies/GetMoviesByFilter?{queryString}");
             response.EnsureSuccessStatusCode();
             if (response.IsSuccessStatusCode)
             {
@@ -453,7 +484,7 @@ namespace MovieLibrary.WPF.ViewModels
 
         public async Task<IEnumerable<MovieDTO>> GetMovies()
         {
-            var response = await client.GetAsync("api/Movies/GetMovies");
+            var response = await webApiClient.GetAsync("api/Movies/GetMovies");
             response.EnsureSuccessStatusCode();
             if (response.IsSuccessStatusCode)
             {
@@ -474,7 +505,7 @@ namespace MovieLibrary.WPF.ViewModels
 
         public async Task AddMovie(MovieDTO movie)
         {
-            var response = await client.PostAsJsonAsync("api/Movies/CreateMovie", movie);
+            var response = await webApiClient.PostAsJsonAsync("api/Movies/CreateMovie", movie);
             response.EnsureSuccessStatusCode();
             if (!response.IsSuccessStatusCode)
             {

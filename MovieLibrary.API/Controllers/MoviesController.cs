@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.BusinessLogic.Infrastructure;
 using MovieLibrary.BusinessLogic.Interfaces;
 using MovieLibrary.BusinessLogic.Models;
@@ -6,6 +7,7 @@ using MovieLibrary.BusinessLogic.Models;
 namespace MovieLibrary.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class MoviesController : Controller
     {

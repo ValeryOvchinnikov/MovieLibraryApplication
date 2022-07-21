@@ -1,5 +1,4 @@
-﻿using System;
-using LinqKit;
+﻿using LinqKit;
 using MovieLibrary.DataAccess.Models;
 
 namespace MovieLibrary.DataAccess.Interfaces

@@ -1,12 +1,11 @@
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MovieLibrary.BusinessLogic.Interfaces;
 using MovieLibrary.BusinessLogic.Services;
 using MovieLibrary.DataAccess.EF;
 using MovieLibrary.DataAccess.Interfaces;
-using MovieLibrary.DataAccess.Models;
 using MovieLibrary.DataAccess.Repositories;
+using System.Text.Json.Serialization;
 
 namespace MovieLibrary.API
 {
@@ -17,7 +16,17 @@ namespace MovieLibrary.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddAuthorization();
+            builder.Services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", opt =>
+                {
+                    opt.RequireHttpsMetadata = false;
+                    opt.Authority = "https://localhost:5001";
+                    opt.Audience = "movieLibraryApi";
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                });
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             builder.Services.AddScoped<IMovieService, MovieService>();
@@ -32,9 +41,14 @@ namespace MovieLibrary.API
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddCors(opt => opt.AddPolicy("CorsPolicy", al =>
+            al.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowAnyOrigin()));
 
             var app = builder.Build();
-
+            app.UseCors("CorsPolicy");
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();

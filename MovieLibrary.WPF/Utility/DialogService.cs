@@ -2,7 +2,7 @@
 
 namespace MovieLibrary.WPF.Utility
 {
-    internal class DialogService  : IDialogService
+    internal class DialogService : IDialogService
     {
         public string OpenFileDialog(string defaultExt, string filter)
         {
