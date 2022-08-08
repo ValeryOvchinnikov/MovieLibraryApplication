@@ -1,0 +1,41 @@
+﻿@model IEnumerable<MovieDTO>
+@{
+    ViewBag.Title = "MovieList";
+}
+
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Rating</th>
+            <th>Director First Name</th>
+            <th>Director Last Name</th>
+        </tr>
+
+         @if(User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Create new movie", "Create","Movie"); 
+            }
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Name, "Details", "Movie", new { id = item.Id }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorFirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorLastName)
+            </td>
+        </tr>
+    }
+</table>

@@ -12,14 +12,18 @@ namespace MovieLibrary.BusinessLogic.Services
     public class MovieService : IMovieService
     {
         private ILog _logger;
+        private readonly IRatingService _ratingService;
         private readonly IMovieRepository _movieRepository;
         private readonly IDirectorRepository _directorRepository;
+        private readonly IRatingRepository _ratingRepository;
         private readonly IMapper _mapper;
 
-        public MovieService(IMovieRepository movieRepository, IDirectorRepository directorRepository, IMapper mapper)
+        public MovieService(IRatingService ratingService, IMovieRepository movieRepository, IDirectorRepository directorRepository, IRatingRepository ratingRepository, IMapper mapper)
         {
+            _ratingService = ratingService;
             _movieRepository = movieRepository;
             _directorRepository = directorRepository;
+            _ratingRepository = ratingRepository;
             _mapper = mapper;
             _logger = Log.GetInstance;
         }
@@ -112,7 +116,11 @@ namespace MovieLibrary.BusinessLogic.Services
         public async Task<IEnumerable<MovieDTO>?> GetAllMovies()
         {
             List<Movie>? movies = await _movieRepository.GetAllAsync() as List<Movie>;
-
+            foreach (Movie movie in movies)
+            {
+                movie.Rating = await _ratingService.GetAverageRating(movie.Id);
+                Math.Round(movie.Rating, 1);
+            }
             IEnumerable<MovieDTO> mappedMovies = movies!.Select(movie => _mapper.Map<MovieDTO>(movie));
             return mappedMovies;
         }
@@ -124,6 +132,9 @@ namespace MovieLibrary.BusinessLogic.Services
             {
                 OnException("Movie was not found");
             }
+
+            movie.Rating = await _ratingService.GetAverageRating(movie.Id);
+            Math.Round(movie.Rating, 1);
 
             var movieDTO = _mapper.Map<MovieDTO>(movie);
 

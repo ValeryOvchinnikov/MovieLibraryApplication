@@ -7,15 +7,18 @@ using MovieLibrary.BusinessLogic.Models;
 namespace MovieLibrary.API.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("api/[controller]")]
     public class MoviesController : Controller
     {
         private readonly IMovieService _movieService;
+        private readonly IRatingService _ratingService;
+        private readonly ICommentService _commentService;
 
-        public MoviesController(IMovieService movieService)
+        public MoviesController(IMovieService movieService, ICommentService commentService, IRatingService ratingService)
         {
             _movieService = movieService;
+            _commentService = commentService;
+            _ratingService = ratingService;
         }
 
         [HttpGet("GetMovies")]
@@ -26,14 +29,13 @@ namespace MovieLibrary.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetMovieById")]
-        public async Task<ActionResult<MovieDTO>> GetMovie(int id)
+        public async Task<ActionResult<MovieDTO>> GetMovieById([FromRoute] int id)
         {
             var movie = await _movieService.GetMovie(id);
             return Ok(movie);
         }
-
-        [HttpPost("CreateMovie")]
-        public async Task<ActionResult> CreateMovie(MovieDTO movie)
+        [HttpPost(Name = "CreateMovie")]
+        public async Task<ActionResult> CreateMovie([FromBody] MovieDTO movie)
         {
             if (movie == null)
             {
@@ -44,29 +46,25 @@ namespace MovieLibrary.API.Controllers
             return Created(new Uri($"api/Movies/{newMovieId}", UriKind.Relative), new { message = "New movie added" });
         }
 
+        [Authorize]
         [HttpDelete("{id}", Name = "DeleteMovie")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteMovie([FromRoute] int id)
         {
             await _movieService.DeleteMovie(id);
             return Ok();
         }
 
-        [HttpGet("GetDirectors")]
-        public async Task<ActionResult<List<DirectorDTO>>> Get()
-        {
-            var directorsList = await _movieService.GetAllDirectors();
-            return Ok(directorsList);
-        }
-
-        [HttpGet("GetMoviesByFilter")]
+        [Authorize]
+        [HttpGet(Name = "GetMoviesByFilter")]
         public async Task<ActionResult<List<MovieDTO>>> GetMoviesByFilter([FromQuery] Filter filter)
         {
             var movieList = await _movieService.GetFilteredMovies(filter);
             return Ok(movieList);
         }
 
-        [HttpPut("{id}", Name = "UpdateMovie")]
-        public async Task<ActionResult> Put(MovieDTO movie)
+        [Authorize]
+        [HttpPut(Name = "UpdateMovie")]
+        public async Task<ActionResult> UpdateMovie([FromBody] MovieDTO movie)
         {
             if (movie != null)
             {
@@ -75,5 +73,77 @@ namespace MovieLibrary.API.Controllers
 
             return Ok(movie);
         }
+
+
+        [HttpPost("AddComment")]
+        public async Task<ActionResult> CreateComment([FromBody] CommentDTO comment)
+        {
+            if (comment == null)
+            {
+                return BadRequest();
+            }
+
+            var id = await _commentService.CreateComment(comment);
+            return Created(new Uri($"api/Movies/{id}", UriKind.Relative), new { message = "New comment added" });
+        }
+
+        [HttpGet("{movieId}/Comments", Name = "GetAllCommentsByMovie")]
+        public async Task<ActionResult<List<CommentDTO>>> GetCommentsByMovie([FromRoute] int movieId)
+        {
+            var comments = await _commentService.GetCommentsByMovieId(movieId);
+            return Ok(comments);
+        }
+
+        [HttpDelete("DeleteComment/{commentId}", Name = "DeleteComment")]
+        public async Task<ActionResult> DeleteComment([FromRoute] int commentId)
+        {
+            await _commentService.DeleteComment(commentId);
+            return Ok();
+        }
+
+
+        [HttpPut("UpdateComment")]
+        public async Task<ActionResult> UpdateComment([FromBody] CommentDTO comment)
+        {
+            if (comment != null)
+            {
+                await _commentService.UpdateComment(comment);
+            }
+
+            return Ok(comment);
+        }
+
+        [HttpPost("AddRating")]
+        public async Task<ActionResult> AddRating([FromBody] RatingDTO rating)
+        {
+            if (rating == null)
+            {
+                return BadRequest();
+            }
+            await _ratingService.CreateRating(rating);
+            return Created(new Uri($"api/Movies/{rating.MovieId}", UriKind.Relative), new { message = "New rating added" });
+        }
+
+        [HttpDelete("DeleteRating")]
+        public async Task<ActionResult> DeleteRating(int ratingId)
+        {
+            await _ratingService.DeleteRating(ratingId);
+            return Ok();
+        }
+
+        [HttpGet("GetAvarageRating")]
+        public async Task<ActionResult> GetAvarageRating(int movieId)
+        {
+            var avgRating = await _ratingService.GetAverageRating(movieId);
+            return Ok(avgRating);
+        }
+
+        [HttpGet("{movieId}/GetRatingsByMovie")]
+        public async Task<ActionResult<List<RatingDTO>>> GetRatingsByMovie([FromRoute]int movieId)
+        {
+            var avgRating = await _ratingService.GetRatingsByMovieId(movieId);
+            return Ok(avgRating);
+        }
+
     }
 }

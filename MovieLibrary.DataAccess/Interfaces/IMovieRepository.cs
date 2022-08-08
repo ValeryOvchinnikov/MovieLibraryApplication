@@ -7,6 +7,5 @@ namespace MovieLibrary.DataAccess.Interfaces
     {
         Task<List<Movie>> GetWhere(ExpressionStarter<Movie> condition);
         Task CreateRangeAsync(List<Movie> movies);
-
     }
 }

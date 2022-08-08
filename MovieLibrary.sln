@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieLibrary.API", "MovieLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieLibrary.IdentityServer", "MovieLibrary.IdentityServer\MovieLibrary.IdentityServer.csproj", "{CA7170B4-4621-42CE-A705-1043ADD11C3F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieLibrary.WebApp", "MovieLibrary.WebApp\MovieLibrary.WebApp.csproj", "{81A3C3B6-49F7-406C-8A29-76BAD1DB5A63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{CA7170B4-4621-42CE-A705-1043ADD11C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA7170B4-4621-42CE-A705-1043ADD11C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA7170B4-4621-42CE-A705-1043ADD11C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81A3C3B6-49F7-406C-8A29-76BAD1DB5A63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81A3C3B6-49F7-406C-8A29-76BAD1DB5A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81A3C3B6-49F7-406C-8A29-76BAD1DB5A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81A3C3B6-49F7-406C-8A29-76BAD1DB5A63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

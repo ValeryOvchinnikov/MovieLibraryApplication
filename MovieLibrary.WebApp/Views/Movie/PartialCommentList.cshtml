@@ -1,0 +1,18 @@
+﻿@model IEnumerable<CommentDTO>
+<div>
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item">
+                <h2>@item.UserNickname</h2>
+                <p>@item.Text</p>
+                @if (User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Удалить коментарий","DeleteComment",new { id = item.Id, movieId = item.MovieId }, null)
+                }
+            </li>
+        }
+    </ul>
+
+</div>
+

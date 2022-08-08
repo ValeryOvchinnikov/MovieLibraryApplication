@@ -82,6 +82,39 @@ public class SeedData
             {
                 Log.Debug("bob already exists");
             }
+
+            var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var member = roleMgr.FindByNameAsync("member").Result;
+
+            if (member == null)
+            {
+                member = new IdentityRole
+                {
+                    Name = "member"
+                };
+                _ = roleMgr.CreateAsync(member).Result;
+            }
+
+            var admin = roleMgr.FindByNameAsync("admin").Result;
+
+            if (admin == null)
+            {
+                admin = new IdentityRole
+                {
+                    Name = "admin"
+                };
+                _ = roleMgr.CreateAsync(admin).Result;
+            }
+
+            if (!userMgr.IsInRoleAsync(alice, member.Name).Result)
+            {
+                _ = userMgr.AddToRoleAsync(alice, member.Name).Result;
+            }
+
+            if (!userMgr.IsInRoleAsync(bob, admin.Name).Result)
+            {
+                _ = userMgr.AddToRoleAsync(alice, admin.Name).Result;
+            }
         }
     }
 }

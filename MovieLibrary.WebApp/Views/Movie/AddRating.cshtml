@@ -1,0 +1,39 @@
+﻿@model MovieLibrary.WebApp.Models.RatingDTO
+
+<h4>Rate movie</h4>
+<hr />
+<div class="grid">
+    <div class="row">
+        <div class="col">
+            <form class="row" asp-action="AddRating" asp-controller="Movie" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div hidden>
+                    <input asp-for="Id" class="form-control" />
+                </div>
+                <div hidden>
+                    <input asp-for="MovieId" class="form-control" />
+                </div>
+                <div hidden>
+                    <input asp-for="UserNickname" value="@User.Identity.Name" class="form-control" />
+                </div>
+                <div class="col-sm-1">
+                    <select id="Value" asp-for="Value" class="form-select">
+                        <option value=1>1</option>
+                        <option value=2>2</option>
+                        <option value=3>3</option>
+                        <option value=4>4</option>
+                        <option value=5>5</option>
+                    </select>
+                    <span asp-validation-for="Value" class="text-danger"></span>
+                </div>
+                <div class="col-sm-1">
+                    <input type="submit" value="Rate" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

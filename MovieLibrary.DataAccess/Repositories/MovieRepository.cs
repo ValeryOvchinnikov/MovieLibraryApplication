@@ -60,7 +60,13 @@ namespace MovieLibrary.DataAccess.Repositories
 
         public async Task UpdateAsync(Movie entity)
         {
-            _mlContext.Movies.Update(entity);
+            var local = _mlContext.Movies.Local.FirstOrDefault(entry => entry.Id.Equals(entity.Id));
+
+            if (local != null)
+            {
+                _mlContext.Entry(local).State = EntityState.Detached;
+            }
+            _mlContext.Entry(entity).State = EntityState.Modified;
             await _mlContext.SaveChangesAsync();
         }
     }

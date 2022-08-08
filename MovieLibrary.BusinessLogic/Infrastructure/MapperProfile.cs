@@ -16,11 +16,11 @@ namespace MovieLibrary.BusinessLogic.Infrastructure
                     dest => dest.Name,
                     opt => opt.MapFrom(src => $"{src.Name}"))
                 .ForMember(
-                    dest => dest.Rating,
-                    opt => opt.MapFrom(src => src.Rating))
-                .ForMember(
                     dest => dest.Year,
                     opt => opt.MapFrom(src => src.Year))
+                .ForMember(
+                    dest => dest.Rating,
+                    opt => opt.MapFrom(src => src.Rating))
                 .ForMember(
                     dest => dest.DirectorId,
                     opt => opt.MapFrom(src => src!.DirectorId))
@@ -39,11 +39,11 @@ namespace MovieLibrary.BusinessLogic.Infrastructure
                     dest => dest.Name,
                     opt => opt.MapFrom(src => $"{src.Name}"))
                 .ForMember(
-                    dest => dest.Rating,
-                    opt => opt.MapFrom(src => src.Rating))
-                .ForMember(
                     dest => dest.Year,
                     opt => opt.MapFrom(src => src.Year))
+                .ForMember(
+                    dest => dest.Rating,
+                    opt => opt.MapFrom(src => src.Rating))
                 .ForMember(
                     dest => dest.DirectorId,
                     opt => opt.MapFrom(src => src!.DirectorId))
@@ -83,7 +83,61 @@ namespace MovieLibrary.BusinessLogic.Infrastructure
                     dest => dest.Movies,
                     opt => opt.MapFrom(src => src.Movies));
 
+            CreateMap<Rating, RatingDTO>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(
+                    dest => dest.MovieId,
+                    opt => opt.MapFrom(src => src.MovieId))
+                .ForMember(
+                    dest => dest.UserNickname,
+                    opt => opt.MapFrom(src => src.UserNickname))
+                .ForMember(
+                    dest => dest.Value,
+                    opt => opt.MapFrom(src => src.Value));
 
+            CreateMap<RatingDTO, Rating>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(
+                    dest => dest.MovieId,
+                    opt => opt.MapFrom(src => src.MovieId))
+                .ForMember(
+                    dest => dest.UserNickname,
+                    opt => opt.MapFrom(src => src.UserNickname))
+                .ForMember(
+                    dest => dest.Value,
+                    opt => opt.MapFrom(src => src.Value));
+
+            CreateMap<Comment, CommentDTO>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(
+                    dest => dest.MovieId,
+                    opt => opt.MapFrom(src => src.MovieId))
+                .ForMember(
+                    dest => dest.UserNickname,
+                    opt => opt.MapFrom(src => src.UserNickname))
+                .ForMember(
+                    dest => dest.Text,
+                    opt => opt.MapFrom(src => src.Text));
+
+            CreateMap<CommentDTO, Comment>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(
+                    dest => dest.MovieId,
+                    opt => opt.MapFrom(src => src.MovieId))
+                .ForMember(
+                    dest => dest.UserNickname,
+                    opt => opt.MapFrom(src => src.UserNickname))
+                .ForMember(
+                    dest => dest.Text,
+                    opt => opt.MapFrom(src => src.Text));
         }
     }
 }

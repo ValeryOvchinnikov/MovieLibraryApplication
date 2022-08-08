@@ -21,6 +21,32 @@ namespace MovieLibrary.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserNickname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("MovieLibrary.DataAccess.Models.Director", b =>
                 {
                     b.Property<int>("Id")
@@ -54,8 +80,8 @@ namespace MovieLibrary.DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
@@ -65,6 +91,42 @@ namespace MovieLibrary.DataAccess.Migrations
                     b.HasIndex("DirectorId");
 
                     b.ToTable("Movies");
+                });
+
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Rating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserNickname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("Ratings");
+                });
+
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Comment", b =>
+                {
+                    b.HasOne("MovieLibrary.DataAccess.Models.Movie", "Movie")
+                        .WithMany("Comments")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("MovieLibrary.DataAccess.Models.Movie", b =>
@@ -78,9 +140,27 @@ namespace MovieLibrary.DataAccess.Migrations
                     b.Navigation("Director");
                 });
 
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Rating", b =>
+                {
+                    b.HasOne("MovieLibrary.DataAccess.Models.Movie", "Movie")
+                        .WithMany("Ratings")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+                });
+
             modelBuilder.Entity("MovieLibrary.DataAccess.Models.Director", b =>
                 {
                     b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("MovieLibrary.DataAccess.Models.Movie", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }
