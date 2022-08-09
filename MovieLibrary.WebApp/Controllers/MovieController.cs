@@ -98,7 +98,6 @@ namespace MovieLibrary.WebApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(MovieDTO movie)
         {
-            _logger.Log(LogLevel.Information, $"RESPONSE {movie.DirectorId}");
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var response = await client.PutAsJsonAsync($"{apiUrl}", movie);
@@ -205,15 +204,10 @@ namespace MovieLibrary.WebApp.Controllers
         [Authorize(Roles = "User")]
         public async Task<ActionResult> AddRating([FromForm]RatingDTO rating)
         {
-
-
             rating.Id = 0;
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
             var response = await client.PostAsJsonAsync($"{apiUrl}/AddRating", rating);
-            _logger.Log(LogLevel.Information, $"RESPONSE {response}");
-
             if (response.IsSuccessStatusCode)
             {
                 ViewBag.Result = "Success";
@@ -227,8 +221,6 @@ namespace MovieLibrary.WebApp.Controllers
 
         public async Task<ActionResult> RatingList(int movieId)
         {
-            _logger.Log(LogLevel.Information, $"RESPONSE {movieId}");
-
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var response = await client.GetAsync($"{apiUrl}/{movieId}/GetRatingsByMovie/");
